@@ -54,6 +54,10 @@ function isShopeeLink(text) {
   return /https?:\/\/(shopee\.[a-z.]+|shp\.ee|s\.shopee\.[a-z.]+)\/\S+/i.test(text);
 }
 
+function isTiktokLink(text) {
+  return /https?:\/\/(www\.|vt\.|vm\.|m\.)?tiktok\.com\/\S+/i.test(text);
+}
+
 // ---------- TELEGRAM BOT ----------
 const bot = new Telegraf(BOT_TOKEN);
 
@@ -61,7 +65,7 @@ bot.start((ctx) => {
   ctx.reply(
     'Hi! Ako yung Shopee Preview Image Changer Bot.\n\n' +
     'Paano gamitin:\n' +
-    '1. Ipadala mo yung Shopee link mo\n' +
+    '1. Ipadala mo yung Shopee link mo or Tiktok link\n' +
     '2. Ipadala mo yung larawan na gusto mong lumabas bilang preview\n' +
     '(kahit anong order, basta dalawa lang)\n\n' +
     'Ibabalik ko sayo yung bagong link na pwede mo nang i-post sa Facebook.'
@@ -69,7 +73,7 @@ bot.start((ctx) => {
 });
 
 bot.help((ctx) => {
-  ctx.reply('Magpadala ka lang ng Shopee link, tapos magpadala ka ng image. Gagawa ako ng bagong link na may custom preview image.');
+  ctx.reply('Magpadala ka lang ng Shopee link or Tiktok link, tapos magpadala ka ng image. Gagawa ako ng bagong link na may custom preview image.');
 });
 
 // Handle text messages (Shopee link)
@@ -77,13 +81,14 @@ bot.on('text', async (ctx) => {
   const text = ctx.message.text.trim();
   if (text.startsWith('/')) return; // ignore other commands
 
-  if (!isShopeeLink(text)) {
-    ctx.reply('Hindi ko ma-recognize yan bilang Shopee link. Pakipadala ulit ng valid na Shopee link.');
+  if (!isShopeeLink(text) && !isTiktokLink(text)) {
+    ctx.reply('Hindi ko ma-recognize yan bilang Shopee o Tiktok link. Pakipadala ulit ng valid na Shopee o Tiktok link.');
     return;
   }
+  
 
   const session = getSession(ctx.chat.id);
-  session.shopeeLink = text;
+  session.shopeeLink  = text;
 
   if (session.imageUrl) {
     await finalizeLink(ctx, session);
@@ -162,8 +167,6 @@ app.get('/p/:id', (req, res) => {
 <html>
 <head>
   <meta charset="utf-8" />
-  <meta property="og:title" content="Check this out sa Shopee!" />
-  <meta property="og:description" content="I-click para makita ang produkto." />
   <meta property="og:image" content="${safeImage}" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="${BASE_URL}/p/${req.params.id}" />
