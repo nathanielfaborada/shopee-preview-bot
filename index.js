@@ -169,7 +169,8 @@ app.get('/p/:id', (req, res) => {
   <meta charset="utf-8" />
   <meta property="og:image" content="${safeImage}" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="${BASE_URL}/p/${req.params.id}" />
+  
+  <<meta property="og:url" content="https://www.facebook.com" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="${safeImage}" />
   ${isCrawler ? '' : `<meta http-equiv="refresh" content="0; url=${safeRedirect}" />`}
