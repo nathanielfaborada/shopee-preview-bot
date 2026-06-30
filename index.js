@@ -169,14 +169,11 @@ app.get('/p/:id', (req, res) => {
   <meta charset="utf-8" />
   <meta property="og:image" content="${safeImage}" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="${BASE_URL}/p/${req.params.id}" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="${safeImage}" />
   ${isCrawler ? '' : `<meta http-equiv="refresh" content="0; url=${safeRedirect}" />`}
-  <title>Redirecting...</title>
 </head>
 <body>
-  <p>Paki-click <a href="${safeRedirect}">dito</a> kung hindi ka automatic na na-redirect.</p>
 </body>
 </html>`;
 
