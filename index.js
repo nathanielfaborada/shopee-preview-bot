@@ -143,6 +143,10 @@ async function finalizeLink(ctx, session) {
 // ---------- EXPRESS SERVER (OG preview + redirect) ----------
 const app = express();
 
+// User-agents ng mga link-preview crawlers (Facebook, Twitter/X, LinkedIn, Telegram, etc.)
+// Sa mga ito, HUWAG mag-redirect — kailangan nilang makita yung OG tags natin.
+const CRAWLER_UA_REGEX = /facebookexternalhit|Facebot|Twitterbot|LinkedInBot|TelegramBot|WhatsApp|Slackbot|Discordbot|Pinterest|redditbot|SkypeUriPreview|vkShare|Applebot/i;
+
 app.get('/p/:id', (req, res) => {
   const entry = db[req.params.id];
   if (!entry) {
@@ -151,8 +155,10 @@ app.get('/p/:id', (req, res) => {
 
   const safeImage = entry.imageUrl;
   const safeRedirect = entry.shopeeLink;
+  const userAgent = req.headers['user-agent'] || '';
+  const isCrawler = CRAWLER_UA_REGEX.test(userAgent);
 
-  res.send(`<!DOCTYPE html>
+  const ogHtml = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
@@ -163,13 +169,15 @@ app.get('/p/:id', (req, res) => {
   <meta property="og:url" content="${BASE_URL}/p/${req.params.id}" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="${safeImage}" />
-  <meta http-equiv="refresh" content="0; url=${safeRedirect}" />
+  ${isCrawler ? '' : `<meta http-equiv="refresh" content="0; url=${safeRedirect}" />`}
   <title>Redirecting...</title>
 </head>
 <body>
   <p>Paki-click <a href="${safeRedirect}">dito</a> kung hindi ka automatic na na-redirect.</p>
 </body>
-</html>`);
+</html>`;
+
+  res.send(ogHtml);
 });
 
 app.get('/', (req, res) => {
