@@ -1,0 +1,1 @@
+# shopee-preview-bot
