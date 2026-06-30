@@ -175,7 +175,7 @@ app.get('/p/:id', (req, res) => {
   <meta charset="utf-8" />
   <meta property="og:image" content="${safeImage}" />
   <meta property="og:type" content="website" />
-  
+  <meta property="og:title" content="FACEBOOK.COM" />
   <meta property="og:url" content="https://www.facebook.com" />
   
   <meta name="twitter:card" content="summary_large_image" />
