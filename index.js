@@ -163,21 +163,18 @@ app.get('/p/:id', (req, res) => {
   const userAgent = req.headers['user-agent'] || '';
   const isCrawler = CRAWLER_UA_REGEX.test(userAgent);
 
-  // 1. KUNG TAO ANG BUMIBISITA: I-redirect agad sa Shopee (Mas mabilis at iwas glitches)
-  if (!isCrawler) {
-    return res.redirect(302, safeRedirect);
-  }
-
-  // 2. KUNG BOT/CRAWLER: I-serve ang HTML na may spoofed na og:url
   const ogHtml = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
   <meta property="og:image" content="${safeImage}" />
   <meta property="og:type" content="website" />
+  <meta property="og:title" content="Facebook" />
   
+  <meta property="og:url" content="${BASE_URL}/p/${req.params.id}" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="${safeImage}" />
+  ${isCrawler ? '' : `<meta http-equiv="refresh" content="0; url=${safeRedirect}" />`}
 </head>
 <body>
 </body>
